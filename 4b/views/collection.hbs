@@ -1,0 +1,45 @@
+{{#> layout title="Collections" user=user }}
+
+<div class="container py-2 px-2 my-4 mb-2" style="width: 80%;">
+    <h2 class="text-white fw-bold">Collections</h2>
+</div>
+<div class="container py-2 px-2 my-4 mt-3" style="display: flex; justify-content: center; width: 80%;">
+    <div class="collections-grid" id="collectionsGrid">
+        {{#each collections}}
+        <div class="collections-card">
+            <div class="card-icon">
+                <img width="30%" src="/src/assets/list_alt_check_89CFF0.svg" alt="status">
+            </div>
+            <div class="card-progress">
+                <div>
+                    <h4 class="mb-0 text-white fw-bold mb-1">{{this.name}}</h4>
+
+                    <h5 class="mb-0 text-secondary">{{this.taskStats.completed}}/{{this.taskStats.total}} done</h5>
+
+                </div>
+
+                {{#if (equal this.taskStats.completed this.taskStats.total )}}
+                <div>
+                    <img height="80%" src="/src/assets/check_circle_80EF80.svg" alt="status">
+                </div>
+                {{else}}
+                <div>
+                    <img height="80%" src="/src/assets/schedule_FFEE8C.svg" alt="status">
+                </div>
+                {{/if}}
+            </div>
+            <a href="/collection/{{this.id}}/task" class="collections-card-add-link"></a>
+        </div>
+        {{/each}}
+        {{#if user}}
+        <div class="collections-card" style="display: flex; justify-content: center;">
+            <div class="collections-card-add">
+                <img src="/src/assets/add_circle_CFCFC4.svg" alt="add">
+            </div>
+            <a href="/collection-add" class="collections-card-add-link"></a>
+        </div>
+        {{/if}}
+    </div>
+</div>
+
+{{/layout}}
