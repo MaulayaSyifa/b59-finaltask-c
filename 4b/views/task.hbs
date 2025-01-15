@@ -1,51 +1,36 @@
 {{#> layout title="Task" user=user }}
 
-<form action="/collection/{{collection_id}}/update-tasks" method="POST">
-    <div class="container py-2 px-2 my-4"
-        style="width: 80%; display: flex; flex-direction: row; justify-content: space-between;">
-        <div class="d-flex flex-row gap-3">
-            <div class="task-collection position-relative button">
-                <img src="/src/assets/arrow_left_FFFFFF.svg" alt="arrow" width="100%">
-                <a href="/collection" class="collections-card-add-link"></a>
-            </div>
-            <div class="task-collection">
-                <div>
-                    <h5 class="mb-0 text-white fw-bold mb-1" style="width: 25ch;">{{collection.name}}</h5>
-                    <h6 class="mb-0 text-secondary">{{taskStats.completed}}/{{taskStats.total}}
-                        done</h6>
-                </div>
-                <div>
-                    <img height="" src="/src/assets/schedule_FFEE8C.svg" alt="status">
-                </div>
-            </div>
+<div class="container py-2 px-2 my-4"
+    style="width: 80%; display: flex; flex-direction: row; justify-content: space-between;">
+    <div class="d-flex flex-row gap-3">
+        <div class="task-collection position-relative button">
+            <img src="/src/assets/arrow_left_FFFFFF.svg" alt="arrow" width="50px">
+            <a href="/collection" class="collections-card-add-link"></a>
         </div>
-        <div class="d-flex flex-row gap-3">
-            <div class="task-collection position-relative button">
-                <img src="/src/assets/save_5985E1.svg" alt="arrow" width="100%">
-                <a type="submit" href="/collection" class="collections-card-add-link"></a>
+        <div class="task-collection">
+            <div>
+                <h5 class="mb-0 text-white fw-bold mb-1" style="width: 25ch;">{{collection.name}}</h5>
+                <h6 class="mb-0 text-secondary">{{completedTasks.length}}/{{taskStats.total}}
+                    done</h6>
             </div>
-            <div class="task-collection position-relative button">
-                <form action="">
-                    <img src="/src/assets/delete_EA3323.svg" alt="arrow" width="100%">
-                    <a type="submit" href="/collection" class="collections-card-add-link"></a>
-                </form>
+            {{#if (equal taskStats.completed taskStats.total )}}
+            <div>
+                <img height="80%" src="/src/assets/check_circle_80EF80.svg" alt="status">
             </div>
+            {{else}}
+            <div>
+                <img height="80%" src="/src/assets/schedule_FFEE8C.svg" alt="status">
+            </div>
+            {{/if}}
         </div>
     </div>
 
-    <div class="container py-2 px-2 my-4" style="width: 80%; display: flex; flex-direction: column; gap: 2rem;">
-        <div class="tasks-container">
-            <h2>Tasks - {{totalRows}}</h2>
-            {{#each tasks}}
-            <div class="task">
-                <label for="task-{{this.id}}">{{this.name}}</label>
-                <input type="checkbox" name="tasks[{{this.id}}]" id="task-{{this.id}}" value="checked" {{#if (eq
-                    this.status "checked" )}}checked{{/if}}>
-            </div>
-            {{/each}}
-        </div>
+    <div>
+        <form action="/collection/{{collection_id}}/task-delete" method="post">
+            <button type="submit" class="button btn-danger w-auto h-100">Delete</button>
+        </form>
     </div>
-</form>
+</div>
 
 <div class="container py-2 px-2 my-4" style="width: 80%;">
     <form action="/collection/{{collection_id}}/task" method="post">
@@ -55,5 +40,39 @@
         </div>
     </form>
 </div>
+
+<div class="container py-2 px-2 my-4" style="width: 80%; display: flex; flex-direction: column; gap: 2rem;">
+    <form id="taskForm" action="/collection/{{collection_id}}/task-add" method="POST">
+        <div class="tasks-container">
+            <h2>Tasks - {{totalRows}}</h2>
+            {{#each tasks}}
+            <div class="task">
+                <label for="task-{{this.id}}">{{this.name}}</label>
+                <input type="checkbox" name="taskIds" id="task-{{this.id}}" value="true" {{#if
+                    this.is_done}}checked{{/if}} onchange="submitForm()">
+            </div>
+            {{/each}}
+        </div>
+    </form>
+</div>
+
+<script>
+    function submitForm() {
+        const form = document.getElementById('taskForm');
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: {
+                'X-HTTP-Method-Override': 'PATCH'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
 
 {{/layout}}

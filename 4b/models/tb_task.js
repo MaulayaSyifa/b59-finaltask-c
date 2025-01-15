@@ -20,8 +20,11 @@ module.exports = (sequelize, DataTypes) => {
 	tb_task.init(
 		{
 			name: DataTypes.STRING,
+			is_done: {
+				type: DataTypes.BOOLEAN,
+				defaultValue: false,
+			},
 			status: DataTypes.STRING,
-			is_done: DataTypes.STRING,
 			collections_id: DataTypes.INTEGER,
 		},
 		{
